@@ -7,7 +7,6 @@ const Typehead = ({ suggestions, handleSelect, categories }) => {
   const [searchIndex, setSearchIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false)
   const maxResults = 5;
-  // console.log(suggestion)
 
   let matched = suggestions
     .filter((suggestion) => {
@@ -18,9 +17,7 @@ const Typehead = ({ suggestions, handleSelect, categories }) => {
       return enoughChars && includesValue;
     })
     .slice(0, maxResults);
-
-  // console.log(matched)
-
+    
 return (
     <Wrapper>
       <SearchInputs>
@@ -28,30 +25,33 @@ return (
           type="text"
           placeholder="Enter search here"
           onChange={(e) => setSearchValue(e.target.value)}
-
+          value={searchValue}
           onKeyDown={(e) => {
             switch (e.key) {
-                case "Enter": {
-                    handleSelect(searchValue);
-                    break;
-                }
-                case "Escape": {
-                    setIsVisible(false)
-                }
-
-                case "ArrowUp": {
+              case "Enter": {
+                handleSelect(matched[searchIndex].title);
+                break;
+              }
+              case "Escape": {
+                setIsVisible(false)
+              }
+              
+              case "ArrowUp": {
+                if (searchIndex > 0){
                   setSearchIndex(searchIndex - 1)
+                }
+                // console.log(searchIndex)
                   break;
                 }
                 case "ArrowDown": {
-                  setSearchIndex(searchIndex - 1)
-                    if (!matched){
-                        return;
-                    }
+                  if (searchIndex < matched.length - 1){
+                    setSearchIndex(searchIndex + 1)
+                  }
+                  break;
                 }
             }
           }}
-        ></Input>
+        />
         <Button onClick={() => setSearchValue("")}>Clear</Button>
       </SearchInputs>
       <SearchResults>
@@ -60,7 +60,9 @@ return (
                 const category = categories[suggestion.categoryId]
                 const isSelected = index === searchIndex;
                 return (
-                    <ListItem>
+                    <ListItem isSelected={isSelected} onMouseOver={() => {
+                      setSearchIndex(index)
+                    }} onClick={() => {window.alert(suggestion.title)}}>
                         <Suggestions 
                         key={suggestion.id}
                         suggestion={suggestion}
@@ -111,9 +113,9 @@ const ListItem = styled.li`
     background-color: ${props => props.isSelected? "lemonchiffon": "white"};
 
     &:hover {
-    background-color: lemonchiffon;
-    cursor: pointer;
-  }
+    /* background-color: lemonchiffon; */ 
+    cursor: pointer; 
+    }
 `
 
 const Button = styled.button`
