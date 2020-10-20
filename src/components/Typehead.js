@@ -4,6 +4,7 @@ import { Suggestions } from "./Suggestions";
 
 const Typehead = ({ suggestions, handleSelect, categories }) => {
   const [searchValue, setSearchValue] = useState("");
+  const [searchIndex, setSearchIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false)
   const maxResults = 5;
   // console.log(suggestion)
@@ -31,16 +32,19 @@ return (
           onKeyDown={(e) => {
             switch (e.key) {
                 case "Enter": {
-                    handleSelect(e.target.value);
-                    return;
+                    handleSelect(searchValue);
+                    break;
                 }
                 case "Escape": {
                     setIsVisible(false)
                 }
 
-                case "ArrowUp":
+                case "ArrowUp": {
+                  setSearchIndex(searchIndex - 1)
+                  break;
+                }
                 case "ArrowDown": {
-                    e.preventDefault();
+                  setSearchIndex(searchIndex - 1)
                     if (!matched){
                         return;
                     }
@@ -54,6 +58,7 @@ return (
         <ul id="results">
             {matched.map((suggestion, index) => {
                 const category = categories[suggestion.categoryId]
+                const isSelected = index === searchIndex;
                 return (
                     <ListItem>
                         <Suggestions 
@@ -103,6 +108,8 @@ const Input = styled.input`
 const ListItem = styled.li`
     margin-top: 10px;
     padding: 10px;
+    background-color: ${props => props.isSelected? "lemonchiffon": "white"};
+
     &:hover {
     background-color: lemonchiffon;
     cursor: pointer;
